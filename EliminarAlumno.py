@@ -1,10 +1,16 @@
 import boto3
+import json
 
 def lambda_handler(event, context):
-    # Entrada (json)
-    tenant_id = event['tenant_id']
-    alumno_id = event['alumno_id']
-    # Proceso
+    # Manejo flexible de entrada
+    if 'body' in event:
+        body = json.loads(event['body']) if isinstance(event['body'], str) else event['body']
+    else:
+        body = event
+
+    tenant_id = body['tenant_id']
+    alumno_id = body['alumno_id']
+
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('t_alumnos')
     response = table.delete_item(
@@ -13,8 +19,12 @@ def lambda_handler(event, context):
             'alumno_id': alumno_id
         }
     )
-    # Salida (json)
+
     return {
         'statusCode': 200,
-        'response': response
+        'body': json.dumps({
+            'message': f'Alumno {alumno_id} eliminado correctamente',
+            'response': response
+        })
     }
+

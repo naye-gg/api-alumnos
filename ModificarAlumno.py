@@ -1,10 +1,17 @@
 import boto3
+import json
 
 def lambda_handler(event, context):
-    # Entrada (json)
-    tenant_id = event['tenant_id']
-    alumno_id = event['alumno_id']
-    alumno_datos = event['alumno_datos']
+    # Manejo flexible de entrada (por body o directa)
+    if 'body' in event:
+        body = json.loads(event['body']) if isinstance(event['body'], str) else event['body']
+    else:
+        body = event
+
+    tenant_id = body['tenant_id']
+    alumno_id = body['alumno_id']
+    alumno_datos = body['alumno_datos']
+
     # Proceso
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('t_alumnos')
@@ -19,8 +26,13 @@ def lambda_handler(event, context):
         },
         ReturnValues="UPDATED_NEW"
     )
-    # Salida (json)
+
+    # Salida
     return {
         'statusCode': 200,
-        'response': response
+        'body': json.dumps({
+            'message': 'Alumno actualizado correctamente',
+            'updated': response.get('Attributes', {})
+        })
     }
+
