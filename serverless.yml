@@ -13,19 +13,17 @@ functions:
     handler: ListarAlumnos.lambda_handler
     events:
       - http:
-          path: /alumnos/listar
-          method: post
+          path: /alumnos
+          method: get
           cors: true
-          integration: lambda
 
   crear:
     handler: CrearAlumno.lambda_handler
     events:
       - http:
-          path: /alumnos/crear
+          path: /alumnos
           method: post
           cors: true
-          integration: lambda
 
   modificar:
     handler: ModificarAlumno.lambda_handler
