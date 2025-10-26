@@ -4,7 +4,7 @@ service: api-alumnos
 provider:
   name: aws
   runtime: python3.13
-  timeout: 20  
+  timeout: 20
   iam:
     role: arn:aws:iam::306083006368:role/LabRole
 
@@ -48,4 +48,3 @@ functions:
           path: /alumnos/{alumno_id}
           method: get
           cors: true
-
