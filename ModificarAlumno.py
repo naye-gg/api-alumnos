@@ -12,7 +12,6 @@ def lambda_handler(event, context):
     alumno_id = body['alumno_id']
     alumno_datos = body['alumno_datos']
 
-    # Proceso
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('t_alumnos')
     response = table.update_item(
@@ -27,12 +26,15 @@ def lambda_handler(event, context):
         ReturnValues="UPDATED_NEW"
     )
 
-    # Salida
     return {
         'statusCode': 200,
+        'headers': {
+            "Content-Type": "application/json; charset=utf-8"
+        },
+        # 👇 Esto permite que Postman muestre acentos y ñ correctamente
         'body': json.dumps({
             'message': 'Alumno actualizado correctamente',
             'updated': response.get('Attributes', {})
-        })
+        }, ensure_ascii=False)
     }
 
